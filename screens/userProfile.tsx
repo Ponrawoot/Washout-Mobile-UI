@@ -10,10 +10,41 @@ import {
   StatusBar,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
+import { useEffect } from "react";
+import * as Notifications from "expo-notifications";
 
 export default function UserProfile() {
+  useEffect(() => {
+    (async () => {
+      const { status } = await Notifications.requestPermissionsAsync();
+      if (status !== "granted") {
+        alert("Permission to send notifications has been denied.");
+        return;
+      }
+    })();
 
-  const navigation = useNavigation()  
+    const subscription = Notifications.addNotificationReceivedListener(
+      (notification) => {
+        console.log("Notification received:", notification);
+      }
+    );
+
+    return () => {
+      subscription.remove();
+    };
+  }, []);
+
+  const sendNotification = async () => {
+    await Notifications.scheduleNotificationAsync({
+      content: {
+        title: "Test Notification",
+        body: "Washout.",
+      },
+      trigger: null,
+    });
+  };
+
+  const navigation = useNavigation();
   return (
     <LinearGradient colors={["white", "#91C8E4"]} style={styles.linearGradient}>
       <View style={styles.container}>
@@ -45,8 +76,20 @@ export default function UserProfile() {
       </View>
 
       <View className="flex-1 items-center justify-center">
-        <TouchableOpacity className="bg-red-500 rounded p-2" onPress={() => navigation.navigate('Login')}>
+        <TouchableOpacity
+          className="bg-red-500 rounded p-2"
+          onPress={() => navigation.navigate("Login")}
+        >
           <Text className="text-white">Sign Out</Text>
+        </TouchableOpacity>
+      </View>
+
+      <View className="flex-1 items-center justify-center">
+        <TouchableOpacity
+          className="bg-purple-500 rounded p-2"
+          onPress={sendNotification}
+        >
+          <Text className="text-white">Mock Noti</Text>
         </TouchableOpacity>
       </View>
     </LinearGradient>
@@ -61,7 +104,7 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     justifyContent: "center",
     backgroundColor: "#749BC2",
-    marginTop: 60
+    marginTop: 60,
   },
   linearGradient: {
     alignItems: "center",
