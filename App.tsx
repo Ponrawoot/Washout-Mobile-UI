@@ -6,7 +6,6 @@ import UserProfile from './screens/userProfile';
 import Register from './screens/regis';
 
 const Stack = createStackNavigator();
-
 export default function App() {
   return (
     <NavigationContainer>
