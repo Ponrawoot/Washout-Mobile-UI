@@ -33,7 +33,7 @@ export default function Login() {
             </View>
 
             <View>
-                {/* <Image source={require('/Users/mac/test_mobile/assets/LOGO.png')}></Image> */}
+                <Image source={require('./img/LOGO.png')}></Image>
             </View>
 
             <View style={styles.setcol}>

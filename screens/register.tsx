@@ -2,25 +2,15 @@ import { StyleSheet, View, Text, TextInput, TouchableOpacity, Image, Button } fr
 import React from 'react'
 import { StatusBar } from 'expo-status-bar'
 import { LinearGradient } from 'expo-linear-gradient';
-import { useNavigation } from '@react-navigation/native';
-import { NavigationContainer } from '@react-navigation/native';
-// import { createNativeStackNavigator } from '@react-navigation/native-stack';
-
 export default function Register() {
-
-  const navigation = useNavigation()
   return (
-    <LinearGradient colors={['white', '#91C8E4' ]} style={styles.linearGradient}>
+    <LinearGradient colors={['#91C8E4', 'white' ]} style={styles.linearGradient}>
         <View style={styles.container}>
             <StatusBar style='light' />
             <View>
                 <Text Text style={styles.header}>
-                    Login
+                    Register
                 </Text>
-            </View>
-
-            <View>
-                {/* <Image source={require('/Users/mac/test_mobile/assets/LOGO.png')}></Image> */}
             </View>
 
             <View style={styles.setcol}>
@@ -31,18 +21,16 @@ export default function Register() {
                 <View style={styles.textbox}>
                     <TextInput placeholder='Password' placeholderTextColor={'gray'} secureTextEntry></TextInput>
                 </View>
+
+                <View style={styles.textbox}>
+                    <TextInput placeholder='Confirm Password' placeholderTextColor={'gray'} secureTextEntry></TextInput>
+                </View>
             </View>
 
-            <View style={styles.setrow}>
+            <View>
                 <View style={styles.button}>
                     <TouchableOpacity >
-                        <Text style={styles.text_button}>Log In</Text>
-                    </TouchableOpacity>
-                </View>
-
-                <View style={styles.create_acc}>
-                    <TouchableOpacity onPress={() => navigation.navigate('Register')}>
-                        <Text style={styles.text_create_acc}>Create an account</Text>
+                        <Text style={styles.text_button}>Create an account</Text>
                     </TouchableOpacity>
                 </View>
 
@@ -61,8 +49,9 @@ const styles = StyleSheet.create({
         width: 270,
         height: 500,  
         borderRadius: 5,  
+        alignItems: 'center',
         justifyContent: 'center',
-        backgroundColor: '#749BC2',
+        backgroundColor: '#749BC2'
     },
     linearGradient:{
         alignItems: 'center',
@@ -73,20 +62,24 @@ const styles = StyleSheet.create({
     },
     textbox: {
         justifyContent: 'space-evenly',
-        alignItems: 'center',
+        alignItems: 'left',
+        padding: 3,
         backgroundColor: '#FFFFFF',
-        margin: 5,
+        margin: 10,
         width: 210,
         height: 30,
-        borderRadius: 4
+        borderRadius: 4,
+        fontSize: 100,
+        fontFamili: 'Noto Sans'
+        
     },
     button: {
         justifyContent: 'space-evenly',
         alignItems: 'center',
-        backgroundColor: '#FFFFFF',
-        margin: 5,
-        width: 50,
-        height: 20,
+        backgroundColor: '#4682A9',
+        marginTop: 50,
+        width: 150,
+        height: 30,
         borderRadius: 4
     },    
     create_acc: {
@@ -119,7 +112,7 @@ const styles = StyleSheet.create({
         fontFamili: 'Noto Sans'
     },
     text_button: {
-        color: '#749BC2',
+        color: '#FFFFFF',
         fontWeight: 'bold',
         alignItems: 'center'
     }
