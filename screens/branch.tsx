@@ -11,11 +11,13 @@ import {
   import { ScrollView } from "react-native";
   import NavBar from "./component/navBar";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
-import { useAppSelector } from "./redux/store";
+import { AppDispatch, useAppSelector } from "./redux/store";
 import { useEffect, useState } from "react";
 import axios from "axios";
-import { BranchItem} from "../interfaces";
+import { BranchItem, ProfileItem} from "../interfaces";
 import { useNavigation } from "@react-navigation/native";
+import { useDispatch } from "react-redux";
+import { selectBranch } from "./redux/features/profileSlice";
 
 
   
@@ -25,6 +27,10 @@ import { useNavigation } from "@react-navigation/native";
     const navigation = useNavigation()
     const profileItem = useAppSelector((state)=> state.reduxPersistedReducer.profileSlice.profileItem)
     const [branches, setBranches] = useState<BranchItem []>([]);
+
+    const dispatch = useDispatch<AppDispatch>()
+    
+
 
     useEffect(() => {
       const fetchData = async () => {
@@ -44,11 +50,26 @@ import { useNavigation } from "@react-navigation/native";
       fetchData();
     }, []);
 
-    const BranchCard = ({ branchName, numberOfMachines }: { branchName: string, numberOfMachines: number }) => {
+    const BranchCard = ({ branchName, branchId }: { branchName: string, branchId: string }) => {
       
-      function handleBranch() {
+
+      const handleBranch = () => {
+        const item:ProfileItem = {
+          accessToken: profileItem.accessToken,
+          username: profileItem.username,
+          uid: profileItem.uid,
+          selectedBranchId: branchId
+      } 
+        console.log(item.selectedBranchId)
+        dispatch(selectBranch(item))
+        console.log(profileItem.selectedBranchId)
         navigation.navigate("Machine")
-      }
+      };
+    
+        
+
+      
+      
 
       return (
         <TouchableOpacity onPress={handleBranch}>
@@ -57,7 +78,7 @@ import { useNavigation } from "@react-navigation/native";
             <Icon name="washing-machine" size={120} color="white" />
           </View>
           <Text style={[styles.description, styles.topLeft, styles.branchName]}>{branchName}</Text>
-          <Text style={[styles.description, styles.bottomLeft, styles.numberOfMachines]}>{numberOfMachines}</Text>
+          {/* <Text style={[styles.description, styles.bottomLeft, styles.numberOfMachines]}>{numberOfMachines}</Text> */}
         </View>
         </TouchableOpacity>
       );
@@ -70,13 +91,13 @@ import { useNavigation } from "@react-navigation/native";
 
 
       {branches.map(branch => (
-        <BranchCard branchName={`สาขา${branch.name}`} numberOfMachines={10}/>
+        <BranchCard branchName={`สาขา${branch.name}`} branchId={branch.id} />
       ))}
     </View>
    
       </ScrollView>
       )
-  }
+      }
   
   const styles = StyleSheet.create({
       container: {
@@ -223,4 +244,8 @@ import { useNavigation } from "@react-navigation/native";
           fontSize: 55
         },
       });
+
+function dispatch(arg0: ProfileItem) {
+  throw new Error("Function not implemented.");
+}
     

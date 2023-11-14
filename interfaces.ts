@@ -2,6 +2,7 @@ export interface ProfileItem {
     accessToken: string,
     username: string,
     uid: string,
+    selectedBranchId: string,
 }
 
 export interface BranchItem {
@@ -9,6 +10,15 @@ export interface BranchItem {
     name: string,
     address: string,
     telNum: string,
+}
+
+export interface MachineItem {
+    id: string,
+    branchId: string,
+    status: string,
+    machineType: string,
+    isOpen: string,
+    remainingTime: number
 }
 
 export interface BranchCustomItem {

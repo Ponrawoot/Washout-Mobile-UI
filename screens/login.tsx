@@ -43,7 +43,8 @@ export default function Login() {
             const item:ProfileItem = {
                 accessToken: access_token,
                 username: username,
-                uid: user.uid
+                uid: user.uid,
+                selectedBranchId: "none"
             }
 
             dispatch(login(item))

@@ -10,6 +10,7 @@ const initialState: ProfileState = {
     accessToken: "",
     username: "",
     uid: "",
+    selectedBranchId: "",
   },
 };
 
@@ -21,9 +22,13 @@ export const profileSlice = createSlice({
       state.profileItem.accessToken = action.payload.accessToken;
       state.profileItem.username = action.payload.username;
       state.profileItem.uid = action.payload.uid;
+      state.profileItem.selectedBranchId = ""
     },
+    selectBranch: (state, action: PayloadAction<ProfileItem>) => {
+      state.profileItem.selectedBranchId = action.payload.selectedBranchId;
+    }
   },
 });
 
-export const { login } = profileSlice.actions;
+export const { login, selectBranch } = profileSlice.actions;
 export default profileSlice.reducer;
