@@ -10,74 +10,71 @@ import {
   StatusBar,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
-import { useEffect } from "react";
-import * as Notifications from "expo-notifications";
+import { useAppSelector } from "./redux/store";
+import { useEffect, useState } from "react";
+import axios from "axios";
+import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 
 export default function UserProfile() {
+
+
+  const profileItem = useAppSelector((state)=> state.reduxPersistedReducer.profileSlice.profileItem)
+  // const orderMessage = useState([])
+
   useEffect(() => {
-    (async () => {
-      const { status } = await Notifications.requestPermissionsAsync();
-      if (status !== "granted") {
-        alert("Permission to send notifications has been denied.");
-        return;
+    const fetchData = async () => {
+      try {
+        const apiUrl = `http://192.168.1.12:3004/api/orders/${profileItem.uid}`;
+        const response = await axios.get(apiUrl, {
+          headers: {
+            Authorization: `Bearer ${profileItem.accessToken}`,
+          },
+        });
+        console.log('Response:', response.data);
+      } catch (error) {
+        if (error.response && error.response.status === 404) {
+          // Handle 404 error (e.g., log it)
+          console.log('Resource not found:', error.response.data);
+        } else {
+          // Handle other errors
+          console.error('Error:', error);
+        }
       }
-    })();
-
-    const subscription = Notifications.addNotificationReceivedListener(
-      (notification) => {
-        console.log("Notification received:", notification);
-      }
-    );
-
-    return () => {
-      subscription.remove();
     };
+    fetchData();
   }, []);
-
-  const sendNotification = async () => {
-    await Notifications.scheduleNotificationAsync({
-      content: {
-        title: "Test Notification",
-        body: "Washout.",
-      },
-      trigger: null,
-    });
-  };
 
   const navigation = useNavigation();
   return (
     <LinearGradient colors={["white", "#91C8E4"]} style={styles.linearGradient}>
       <View style={styles.container}>
-        <StatusBar style="light" />
-
         <View style={styles.circle}>
-          <Text style={styles.userIcon}>U</Text>
+        <Icon name="account" size={80} color="#4682A9"/>
         </View>
 
-        <View className="bg-white w-3/4 rounded-xl my-2">
-          <Text className="text-black text-center text-xl">Username</Text>
-        </View>
-
-        <View>
-          <Text className="text-white">uid: xxxxxxxxxxx</Text>
+        <View className="bg-white w-3/4 rounded-xl my-10 py-2">
+          <Text className="text-black text-center text-xl">{profileItem.username}</Text>
         </View>
 
         <View>
-          <Text className="text-white">
+          <Text style={{ textAlign: 'center', color: 'white' }}>uid: {profileItem.uid}</Text>
+        </View>
+
+        <View>
+          <Text style={{ textAlign: 'center', color: 'white', paddingTop: 30 }}>
             Recent Order:
             {"\n"}
-            oid1
+            "You don't have any order right now!"
+            {/* oid1 */}
             {"\n"}
-            oid2
-            {"\n"}
-            oid3
+            {/* oid2 */}
           </Text>
         </View>
       </View>
 
       <View className="flex-1 items-center justify-center">
         <TouchableOpacity
-          className="bg-red-500 rounded p-2"
+          className="bg-red-500 rounded p-3"
           onPress={() => navigation.navigate("Login")}
         >
           <Text className="text-white">Sign Out</Text>
@@ -86,10 +83,10 @@ export default function UserProfile() {
 
       <View className="flex-1 items-center justify-center">
         <TouchableOpacity
-          className="bg-purple-500 rounded p-2"
-          onPress={sendNotification}
+          className="bg-slate-500 rounded p-3"
+          onPress={() => navigation.navigate("Branch")}
         >
-          <Text className="text-white">Mock Noti</Text>
+          <Text className="text-white">Go To Branch Page</Text>
         </TouchableOpacity>
       </View>
     </LinearGradient>
@@ -98,13 +95,14 @@ export default function UserProfile() {
 
 const styles = StyleSheet.create({
   container: {
-    alignItems: "center",
-    width: 270,
-    height: 500,
-    borderRadius: 5,
-    justifyContent: "center",
-    backgroundColor: "#749BC2",
-    marginTop: 60,
+    alignItems: 'center',
+        width: 270,
+        height: 500,  
+        borderRadius: 5,  
+        justifyContent: 'center',
+        backgroundColor: '#749BC2',
+        marginTop: 110,
+        padding: 20
   },
   linearGradient: {
     alignItems: "center",
@@ -117,10 +115,12 @@ const styles = StyleSheet.create({
     justifyContent: "space-evenly",
     alignItems: "center",
     backgroundColor: "#FFFFFF",
-    margin: 5,
+    margin: 0,
+    padding:20,
     width: 210,
     height: 30,
     borderRadius: 4,
+
   },
   button: {
     justifyContent: "space-evenly",
@@ -148,17 +148,17 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
   setcol: {
-    flexDirection: "col",
+    // flexDirection: "col",
     marginTop: 20,
   },
   header: {
     color: "#FFFFFF",
     alignItems: "center",
     fontWeight: "bold",
-    fontSize: 20,
+    // fontSize: 20,
     marginBottom: 10,
     fontSize: 40,
-    fontFamili: "Noto Sans",
+    // fontFamili: "Noto Sans",
   },
   text_button: {
     color: "#749BC2",
@@ -174,7 +174,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   userIcon: {
-    fontSize: 36,
+    // fontSize: 40,
     color: "#4682A9",
   },
 });
