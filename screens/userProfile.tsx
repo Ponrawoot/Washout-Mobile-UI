@@ -16,10 +16,12 @@ import axios from "axios";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 
 export default function UserProfile() {
-
-
-  const profileItem = useAppSelector((state)=> state.reduxPersistedReducer.profileSlice.profileItem)
-  // const orderMessage = useState([])
+  const profileItem = useAppSelector(
+    (state) => state.reduxPersistedReducer.profileSlice.profileItem
+  );
+  const [orderMessage, setOrderMessage] = useState<string[]>([
+    "You don't have any order right now!",
+  ]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -30,12 +32,13 @@ export default function UserProfile() {
             Authorization: `Bearer ${profileItem.accessToken}`,
           },
         });
-        console.log('Response:', response.data);
+        console.log("Response:", response.data);
+        setOrderMessage(response.data);
       } catch (error) {
         if (error.response && error.response.status === 404) {
-          console.log('Resource not found:', error.response.data);
+          console.log("Resource not found:", error.response.data);
         } else {
-          console.error('Error:', error);
+          console.error("Error:", error);
         }
       }
     };
@@ -47,25 +50,28 @@ export default function UserProfile() {
     <LinearGradient colors={["white", "#91C8E4"]} style={styles.linearGradient}>
       <View style={styles.container}>
         <View style={styles.circle}>
-        <Icon name="account" size={80} color="#4682A9"/>
+          <Icon name="account" size={80} color="#4682A9" />
         </View>
 
         <View className="bg-white w-3/4 rounded-xl my-10 py-2">
-          <Text className="text-black text-center text-xl">{profileItem.username}</Text>
+          <Text className="text-black text-center text-xl">
+            {profileItem.username}
+          </Text>
         </View>
 
         <View>
-          <Text style={{ textAlign: 'center', color: 'white' }}>uid: {profileItem.uid}</Text>
+          <Text style={{ textAlign: "center", color: "white" }}>
+            uid: {profileItem.uid}
+          </Text>
         </View>
 
         <View>
-          <Text style={{ textAlign: 'center', color: 'white', paddingTop: 30 }}>
+          <Text style={{ textAlign: "center", color: "white", paddingTop: 30 }}>
             Recent Order:
             {"\n"}
-            "You don't have any order right now!"
-            {/* oid1 */}
-            {"\n"}
-            {/* oid2 */}
+            {orderMessage.map((message, index) => (
+              <Text key={index}>{message}</Text>
+            ))}
           </Text>
         </View>
       </View>
@@ -93,14 +99,14 @@ export default function UserProfile() {
 
 const styles = StyleSheet.create({
   container: {
-    alignItems: 'center',
-        width: 270,
-        height: 500,  
-        borderRadius: 5,  
-        justifyContent: 'center',
-        backgroundColor: '#749BC2',
-        marginTop: 110,
-        padding: 20
+    alignItems: "center",
+    width: 270,
+    height: 500,
+    borderRadius: 5,
+    justifyContent: "center",
+    backgroundColor: "#749BC2",
+    marginTop: 110,
+    padding: 20,
   },
   linearGradient: {
     alignItems: "center",
@@ -114,11 +120,10 @@ const styles = StyleSheet.create({
     alignItems: "center",
     backgroundColor: "#FFFFFF",
     margin: 0,
-    padding:20,
+    padding: 20,
     width: 210,
     height: 30,
     borderRadius: 4,
-
   },
   button: {
     justifyContent: "space-evenly",

@@ -11,53 +11,119 @@ import { ScrollView } from "react-native";
 import NavBar from "./component/navBar";
 import { useEffect, useState } from "react";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
+import { useAppSelector } from "./redux/store";
+import axios from "axios";
+import { MachineItem } from "../interfaces";
 
 export default function Machine() {
 
-  const [selectedCard, setSelectedCard] = useState({number:'',type:''});
+  const [selectedCard, setSelectedCard] = useState({number:'',type:'',id:''});
+  const profileItem = useAppSelector((state)=> state.reduxPersistedReducer.profileSlice.profileItem)
+  const [machines, setMachines] = useState<MachineItem []>([]);
 
-  const startMachine = () => {
-    // POST start machine
-    // GET machine
-    closeModal()
-  }
 
-  useEffect(() => {
+    const startMachine = async () => {
+  
+      // POST start machine 10.0.0.2
+        try {
+          const response = await axios.post(
+            'http://192.168.1.12:3004/api/machines/start',
+            {
+              machineId: selectedCard.id,
+              userId: profileItem.uid,
+            },
+            {
+              headers: {
+                Authorization: `Bearer ${profileItem.accessToken}`,
+              },
+            }
+          );
+            console.log("test", selectedCard.id)
     
-    console.log("Selected card changed:", selectedCard);
+            // Check if the login was successful based on the response status
+            if (response.status === 200) {
+                console.log('Start machine successful');
+                console.log(response.data);
+            } else {
+              
+                console.error('Start machine failed:', response.data.error);
+            
+            }
+        } catch (error) {
+    
+            console.error('Error during start machine:', error);
+    
+        }
+    
+      // GET machine
+      try {
+        const apiUrl = `http://192.168.1.12:3004/api/machines/branchId/${profileItem.selectedBranchId}`; // Replace with your actual API endpoint
+        const response = await axios.get(apiUrl, {
+          headers: {
+            Authorization: `Bearer ${profileItem.accessToken}`,
+          },
+        });
+        setMachines(response.data.machines);
+        console.log(response.data)
+        console.log(profileItem.selectedBranchId)
+      } catch (error) {
+        console.error('Error:', error);
+      }
+      closeModal()
+    }
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const apiUrl = `http://192.168.1.12:3004/api/machines/branchId/${profileItem.selectedBranchId}`; // Replace with your actual API endpoint
+        const response = await axios.get(apiUrl, {
+          headers: {
+            Authorization: `Bearer ${profileItem.accessToken}`,
+          },
+        });
+        setMachines(response.data.machines);
+        // console.log(response.data)
+        // console.log(profileItem.selectedBranchId)
+      } catch (error) {
+        console.error('Error:', error);
+      }
+    };
 
-  }, [selectedCard]);
+    fetchData();
+  }, []);
 
 
   const WashingMachineCard = ({
     machineNumber,
     Type,
-    status = "Available",
+    status,
+    machineId
     
   }: {
     status: string,
     machineNumber: string;
     Type: string,
+    machineId: string
   }) => {
 
     
 
     const handlePress = () => {
-      if (status === "Available" && selectedCard.number===machineNumber && selectedCard.type=== Type) {
-        setSelectedCard({number:machineNumber,type:Type});
+      console.log()
+      if (status === "available" && selectedCard.number===machineNumber && selectedCard.type=== Type) {
+        // setSelectedCard({number:machineNumber,type:Type,id:machineId});
         openModal()
       }
-      else if (status === "Available") {
-        setSelectedCard({number:machineNumber,type:Type});
+      else if (status === "available") {
+        setSelectedCard({number:machineNumber,type:Type,id:machineId});
       }
     };
 
     const cardStyle = {
       ...styles.card,
       backgroundColor:
-        selectedCard.number === machineNumber && selectedCard.type === Type 
+        selectedCard.number === machineNumber && selectedCard.type === Type && selectedCard.id === machineId
           ? "#FFA0A0"
-          : status === "Unavailable"
+          : status === "working" || status === "finished"
           ? "#D9D9D9"
           : "#91C8E4",
     };
@@ -67,6 +133,7 @@ export default function Machine() {
         onPress={handlePress}
         activeOpacity={0.7}
         style={styles.cardContainer}
+        disabled={status === "working" || status === "finished"}
       >
         <View style={cardStyle}>
           <View style={styles.iconContainer}>
@@ -80,15 +147,27 @@ export default function Machine() {
   };
 
   const [modalVisible, setModalVisible] = useState(false);
-  const [selectedCardData, setSelectedCardData] = useState({});
 
   const openModal = () => {
     setModalVisible(true);
   };
 
   const closeModal = () => {
+    setSelectedCard({number:'',type:'',id:''})
     setModalVisible(false);
   };
+
+  // const numberOf7KgType = machines.filter(machine => machine.machineType === '7 kg').length;
+  // const numberOf16KgType = machines.filter(machine => machine.machineType === '16 kg').length;
+  // const numberOf20KgType = machines.filter(machine => machine.machineType === '20 kg').length;
+
+  const filtered7KgTypeMachines = machines.filter(machine => machine.machineType === '7 kg');
+  const filtered16KgTypeMachines = machines.filter(machine => machine.machineType === '16 kg');
+  const filtered20KgTypeMachines = machines.filter(machine => machine.machineType === '20 kg');
+  const numberOf7KgType = filtered7KgTypeMachines.length;
+  const numberOf16KgType = filtered16KgTypeMachines.length;
+  const numberOf20KgType = filtered20KgTypeMachines.length;
+  
   return (
     <ScrollView style={styles.greyBackground}>
       <View style={styles.greyBackground}></View>
@@ -107,12 +186,13 @@ export default function Machine() {
           <View style={styles.modalView}>
             <Pressable
               style={styles.closeIcon}
-              onPress={() => setModalVisible(!modalVisible)}
+              onPress={() => closeModal()}
             >
               <Icon name="close" size={25} color="#FFFF" style={styles.closeIcon}/>
             </Pressable>
             <Text style={styles.modalText}>Selected machine: Number {selectedCard.number}</Text>
             <Text style={styles.modalText}>Machine type: {selectedCard.type}</Text>
+            <Text style={styles.modalText}>Machine id: {selectedCard.id}</Text>
 
             <View style={{ alignItems: "center" , marginTop: 200}}>
               <TouchableOpacity style={styles.button} onPress={startMachine}>
@@ -125,28 +205,27 @@ export default function Machine() {
       <View style={[styles.whiteBox]}>
         <Text style={styles.boxText}>7kg</Text>
         <View style={{ flexDirection: "row", flexWrap: "wrap" }}>
-          <WashingMachineCard machineNumber="1"  Type="7kg" status="Unavailable"/>
-          <WashingMachineCard machineNumber="2"  Type="7kg" />
-          <WashingMachineCard machineNumber="3"  Type="7kg" />
-          <WashingMachineCard machineNumber="4"  Type="7kg" />
+        {filtered7KgTypeMachines.map((machine, index) => (
+            <WashingMachineCard machineNumber={(numberOf7KgType+index).toString()} Type={machine.machineType} key={machine.id} status={machine.status} machineId={machine.id} />
+        ))}
         </View>
       </View>
 
       <View style={styles.whiteBox}>
         <Text style={styles.boxText}>16kg</Text>
         <View style={{ flexDirection: "row", flexWrap: "wrap" }}>
-          <WashingMachineCard machineNumber="1" Type="16kg"/>
-          <WashingMachineCard machineNumber="2" Type="16kg" />
-          <WashingMachineCard machineNumber="3" Type="16kg" />
+        {filtered16KgTypeMachines.map((machine, index) => (
+            <WashingMachineCard machineNumber={(numberOf16KgType+index).toString()} Type={machine.machineType} key={machine.id} status={machine.status} machineId={machine.id}/>
+        ))}
         </View>
       </View>
 
       <View style={styles.whiteBox}>
         <Text style={styles.boxText}>20kg</Text>
         <View style={{ flexDirection: "row", flexWrap: "wrap" }}>
-          <WashingMachineCard machineNumber="1" Type="20kg"/>
-          <WashingMachineCard machineNumber="2" Type="20kg" />
-          <WashingMachineCard machineNumber="3" Type="20kg" />
+        {filtered20KgTypeMachines.map((machine, index) => (
+            <WashingMachineCard machineNumber={(numberOf20KgType+index).toString()} Type={machine.machineType} key={machine.id} status={machine.status} machineId={machine.id}/>
+        ))}
         </View>
       </View>
     </ScrollView>
