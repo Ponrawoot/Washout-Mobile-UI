@@ -33,10 +33,8 @@ export default function UserProfile() {
         console.log('Response:', response.data);
       } catch (error) {
         if (error.response && error.response.status === 404) {
-          // Handle 404 error (e.g., log it)
           console.log('Resource not found:', error.response.data);
         } else {
-          // Handle other errors
           console.error('Error:', error);
         }
       }
@@ -155,10 +153,8 @@ const styles = StyleSheet.create({
     color: "#FFFFFF",
     alignItems: "center",
     fontWeight: "bold",
-    // fontSize: 20,
     marginBottom: 10,
     fontSize: 40,
-    // fontFamili: "Noto Sans",
   },
   text_button: {
     color: "#749BC2",

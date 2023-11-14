@@ -6,7 +6,6 @@ import UserProfile from './screens/userProfile';
 import Register from './screens/register';
 import Machine from './screens/machine';
 import Branch from './screens/branch';
-import YourComponent from './screens/unused/test';
 import ReduxProvider from './screens/redux/ReduxProvider';
 
 const Stack = createStackNavigator();
@@ -15,7 +14,6 @@ export default function App() {
     <ReduxProvider>
     <NavigationContainer>
       <Stack.Navigator>
-      {/* <Stack.Screen name="Test" component={YourComponent} /> */}
         <Stack.Screen name="Login" component={Login} />
         <Stack.Screen name="UserProfile" component={UserProfile} />
         <Stack.Screen name="Register" component={Register} />

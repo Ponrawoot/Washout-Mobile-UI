@@ -164,7 +164,7 @@ import { useNavigation } from "@react-navigation/native";
         },
         greyBackground: {
           flex: 1,
-          backgroundColor: '#ccc', // Use your desired shade of grey
+          backgroundColor: '#ccc',
           
         },
         whiteBox: {

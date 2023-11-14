@@ -160,7 +160,6 @@ const styles = StyleSheet.create({
         marginTop: 10
     },
     setcol: {
-        // flexDirection: 'col',
         marginTop: 20
     },
     header: {

@@ -16,17 +16,18 @@ export default function Machine() {
 
   const [selectedCard, setSelectedCard] = useState({number:'',type:''});
 
-  // useEffect(() => {
-  //   console.log("Selected card changed:", selectedCard);
-  // }, [selectedCard]);
-
   const startMachine = () => {
     // POST start machine
     // GET machine
     closeModal()
-    setSelectedCard({number:'',type:''})
-  
   }
+
+  useEffect(() => {
+    
+    console.log("Selected card changed:", selectedCard);
+
+  }, [selectedCard]);
+
 
   const WashingMachineCard = ({
     machineNumber,
@@ -224,7 +225,7 @@ const styles = StyleSheet.create({
   },
   greyBackground: {
     flex: 1,
-    backgroundColor: "#ccc", // Use your desired shade of grey
+    backgroundColor: "#ccc", 
   },
   whiteBox: {
     backgroundColor: "white",
@@ -233,7 +234,7 @@ const styles = StyleSheet.create({
     paddingBottom: 15,
     marginHorizontal: 8,
     marginBottom: 16,
-    justifyContent: "space-between", // Adjust as needed
+    justifyContent: "space-between", 
   },
   boxText: {
     fontSize: 18,
@@ -250,8 +251,8 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     paddingVertical: 15,
     // paddingHorizontal: 5,
-    elevation: 3, // for shadow on Android
-    shadowColor: "#000", // for shadow on iOS
+    elevation: 3, 
+    shadowColor: "#000", 
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.2,
   },
